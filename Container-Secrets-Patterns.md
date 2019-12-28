@@ -70,13 +70,18 @@ $ git-crypt lock ../key-of-git-crypt
 #### known used
 
 [Git-crypt](https://github.com/AGWA/git-crypt)
+
 [BlackBox](https://github.com/StackExchange/blackbox)
+
 [SOPS](https://github.com/mozilla/sops)
+
 [Transcrypt](https://github.com/elasticdog/transcrypt)
 
 #### REFERENCE
 [Secret Management Architectures: Finding the balance between security and complexity](https://medium.com/slalom-technology/secret-management-architectures-finding-the-balance-between-security-and-complexity-9e56f2078e54)
+
 [Securing data in your repository with git-crypt – an android example](https://www.schibsted.pl/blog/securing-data-with-git-crypt/)
+
 [4 secrets management tools for Git encryption](https://opensource.com/article/19/2/secrets-management-tools-git)
 
 
@@ -130,6 +135,7 @@ db-username:  6 bytes
 ```
 
 **存取控管**
+
 將 pod 可以使用的參數設定到 pod 的  enviroment variable 中
 
 這裡是一個以  enviroment variable 進行 secret 配置的設定，檔名為 `secret-envars-pod.yaml`
@@ -164,6 +170,7 @@ root@secret-envars-test-pod:/ printenv
 SECRET_PASSWORD=password-of-db
 SECRET_USERNAME=dbadm
 ```
+在該 pod 中只能取用所指定的 secret，以此方式來達到權限控管的目的
 
 #### result context
 - secret 可以被存放在一個集中管理的服務中
@@ -288,6 +295,8 @@ https://banzaicloud.com/blog/inject-secrets-into-pods-vault-revisited/
 
 ## reference
 [k8s configmap](https://medium.com/@vincentkernn/deploying-kubernetes-with-configmap-and-secrets-5aff29077b8d)
+
 [k8s secret](https://kubernetes.io/docs/concepts/configuration/secret/)
+
 [secret management](https://blog.cryptomove.com/secrets-management-guide-approaches-open-source-tools-commercial-products-challenges-db560fd0584d)
 ###### tags: `patterns`
