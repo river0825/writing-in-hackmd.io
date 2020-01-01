@@ -1,21 +1,20 @@
 Container Secrets Patterns
 ===
 
-### context
-要將軟體發佈至營運的環境中時。不可避免的一定會有許多參數需要進行設定。而其中有些非常機敏性的參數(在此我們稱為 secret)，比如資料庫密碼，外部 ftp 的帳號密碼，API Key 等等。這些有高度資安疑慮不可外洩的資訊要以一個安全可追蹤的方式來進行儲存且發佈到軟體運行的環境。
-
-## 存放模式
-
-### problem
-我們如何能夠將 secret 安全的被儲存
-
 ### 版控存放
 將 secret 透過版本控管以加密檔案存儲方式
+
+### context
+要將軟體發佈至營運的環境中時, 不可避免的一定會有許多參數需要進行設定。而其中有些非常機敏性的參數(在此我們稱為 secret)，比如資料庫密碼，外部 ftp 的帳號密碼，API Key 等等。這些有高度資安疑慮不可外洩的資訊要以一個安全可追蹤的方式來進行儲存且發佈到軟體運行的環境。
+
+### problem
+我們如何能夠將 secret 安全的被儲存，並合理的被使用
 
 #### force
 - 不想要用太複雜的方式來存放 secret
 - 除了原有的 scm repository 以外，不需再有其他的 server 
-- secret 可以隨著發佈的程式碼一伴發佈出去，CI/CD的流程較為簡化
+- secret 可以直接隨著發佈的程式碼一伴發佈出去，CI/CD的流程較為簡化
+- 當專案是屬於 monolithic 架構較為簡單，沒有多個 repository 要存取同一組 secret 的狀況下
 
 #### solution
 將 secret 存放在版本控管的系統中，利用版本控管支援 hook script 的功能，在將檔案存入主要的 repository 時觸發 hook script, 將所指定的檔案進行加密。反之，在取得檔案時，要將所指定的檔案解密
@@ -66,6 +65,7 @@ $ git-crypt lock ../key-of-git-crypt
 #### result context
 - 除了原來有在使用版本控管的服務之外不需要再另外加其他的服務便可以運行
 - 在多人協作的環境之下需要將相關的加密 key 存放在 使用者的設備上，對於在使用者設備上的加密 key 控管難度較高
+- 當專案要從 monolist 轉變為 microserice 時，必需將 secret 同步至不同的 repository 中，會增加管理上的複雜度。
 
 #### known used
 
@@ -84,14 +84,21 @@ $ git-crypt lock ../key-of-git-crypt
 
 [4 secrets management tools for Git encryption](https://opensource.com/article/19/2/secrets-management-tools-git)
 
-
-### - 中央存放
+-------
+### 中央存放
 將 secret 以中央服務(secret management service)方式存儲
 
+### problem
+我們如何能夠將 secret 安全的被儲存，並合理的被使用
+
+### context
+要將軟體發佈至營運的環境中時。不可避免的一定會有許多參數需要進行設定。而其中有些非常機敏性的參數(在此我們稱為 secret)，比如資料庫密碼，外部 ftp 的帳號密碼，API Key 等等。這些有高度資安疑慮不可外洩的資訊要以一個安全可追蹤的方式來進行儲存且發佈到軟體運行的環境。
+
 #### force 
-- secret 可集中控管
+- secret 可集中控管，不需要在所有的專案程式碼中都存放一份
 - secret management service 有提供工具來管理 secret
-- 中央服務可提供較靈活的權限控管，只提供所需要的 secret 給特定的使用者
+- 中央服務可提供較靈活的權限控管，提供所需要的 secret 給特定的服務
+- 當專案是屬於 microservice ，有多個不同的服務要存取同一組 secret 時。
 
 #### solution
 將 secret 存放在 secret management service 中。secret management service 以服務的方式存在於系統中，並提供權限控管，可依 secret 來定義存取的權限。 secret 管理者利用 secret management service 所提供的工具進行 secret 的管理。
@@ -186,6 +193,11 @@ SECRET_USERNAME=dbadm
 
 #### Reference
 [distribute-credentials-secure](https://kubernetes.io/zh/docs/tasks/inject-data-application/distribute-credentials-secure/)
+
+
+
+
+
 
 ## 發佈模式 -- (還未完成)
 
