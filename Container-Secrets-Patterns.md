@@ -5,19 +5,22 @@ Container Secrets Patterns
 將 secret 透過版本控管以加密檔案存儲方式
 
 ### context
-要將軟體發佈至營運的環境中時, 不可避免的一定會有許多參數需要進行設定。而其中有些非常機敏性的參數(在此我們稱為 secret)，比如資料庫密碼，外部 ftp 的帳號密碼，API Key 等等。這些有高度資安疑慮不可外洩的資訊要以一個安全可追蹤的方式來進行儲存且發佈到軟體運行的環境。
+要將軟體發佈至營運的環境中時, 不可避免的一定會有許多參數需要進行設定。而其中有些機敏性的參數(在此我們稱為 secret)，比如資料庫密碼，外部 ftp 的帳號密碼，API Key 等等。這些有高度資安疑慮不可外洩的資訊要以一個安全可追蹤的方式來進行儲存且發佈到軟體運行的環境。
 
 ### problem
-我們如何能夠將 secret 安全的被儲存，並合理的被使用
+如何安全存取 secret
 
 #### force
-- 不想要用太複雜的方式來存放 secret
-- 除了原有的 scm repository 以外，不需再有其他的 server 
+- secret 不可採用明碼方式儲存
+- secret 不會被許多不同的服務或專案存取
 - secret 可以直接隨著發佈的程式碼一伴發佈出去，CI/CD的流程較為簡化
-- 當專案是屬於 monolithic 架構較為簡單，沒有多個 repository 要存取同一組 secret 的狀況下
 
 #### solution
+
 將 secret 存放在版本控管的系統中，利用版本控管支援 hook script 的功能，在將檔案存入主要的 repository 時觸發 hook script, 將所指定的檔案進行加密。反之，在取得檔案時，要將所指定的檔案解密
+
+![](https://i.imgur.com/YmKflmn.png)
+
 
 **以 [Git-crypt](https://github.com/AGWA/git-crypt) 為例**
 
@@ -65,7 +68,7 @@ $ git-crypt lock ../key-of-git-crypt
 #### result context
 - 除了原來有在使用版本控管的服務之外不需要再另外加其他的服務便可以運行
 - 在多人協作的環境之下需要將相關的加密 key 存放在 使用者的設備上，對於在使用者設備上的加密 key 控管難度較高
-- 當專案要從 monolist 轉變為 microserice 時，必需將 secret 同步至不同的 repository 中，會增加管理上的複雜度。
+- 當專案複雜度變高，新增多種不同服務時。必需將 secret 同步至不同的 repository 中，會增加管理上的複雜度。
 
 #### known used
 
@@ -89,18 +92,20 @@ $ git-crypt lock ../key-of-git-crypt
 將 secret 以中央服務(secret management service)方式存儲
 
 ### problem
-我們如何能夠將 secret 安全的被儲存，並合理的被使用
+如何安全存取 secret
 
 ### context
-要將軟體發佈至營運的環境中時。不可避免的一定會有許多參數需要進行設定。而其中有些非常機敏性的參數(在此我們稱為 secret)，比如資料庫密碼，外部 ftp 的帳號密碼，API Key 等等。這些有高度資安疑慮不可外洩的資訊要以一個安全可追蹤的方式來進行儲存且發佈到軟體運行的環境。
+要將軟體發佈至營運的環境中時。不可避免的一定會有許多參數需要進行設定。而其中有些機敏性的參數(在此我們稱為 secret)，比如資料庫密碼，外部 ftp 的帳號密碼，API Key 等等。這些有高度資安疑慮不可外洩的資訊要以一個安全可追蹤的方式來進行儲存且發佈到軟體運行的環境。
 
 #### force 
-- secret 可集中控管，不需要在所有的專案程式碼中都存放一份
-- secret management service 有提供工具來管理 secret
-- 中央服務可提供較靈活的權限控管，提供所需要的 secret 給特定的服務
-- 當專案是屬於 microservice ，有多個不同的服務要存取同一組 secret 時。
+- secret 不可採用明碼方式儲存
+- 專案的結構比較複雜，有多個不同的服務要存取同一組 secret ，或是多個服務使用多組secret。
+- 多個secret如果分開儲存，會造成管理的困難甚至造成安全疑慮。例如，需要設定不同軟體模組讀取不同secret的權限。
 
 #### solution
+
+![](https://i.imgur.com/z6DxSk5.png)
+
 將 secret 存放在 secret management service 中。secret management service 以服務的方式存在於系統中，並提供權限控管，可依 secret 來定義存取的權限。 secret 管理者利用 secret management service 所提供的工具進行 secret 的管理。
 
 以 [K8S Secret](https://kubernetes.io/zh/docs/concepts/configuration/secret/#%e6%9c%80%e4%bd%b3%e5%ae%9e%e8%b7%b5) 為例
@@ -141,7 +146,7 @@ db-password:  14 bytes
 db-username:  6 bytes
 ```
 
-**存取控管**
+**存取控管 - 將 secret 佈署至 pod 中**
 
 將 pod 可以使用的參數設定到 pod 的  enviroment variable 中
 
@@ -179,11 +184,12 @@ SECRET_USERNAME=dbadm
 ```
 在該 pod 中只能取用所指定的 secret，以此方式來達到權限控管的目的
 
+
 #### result context
 - secret 可以被存放在一個集中管理的服務中
-- secret 的存取有被管理限制
-- 需要使用額外的 server 來提供服務
-- 會增加服務的複雜度
+- secret 的存取可以被有效的管理及限制，對於權限也可以讓管理人員方便的管理
+- 需要使用額外的設備來提供 secret management service 的服務
+- 會增加服務設定的的複雜度
 
 #### known used
 - Hashicorp Vault
@@ -193,11 +199,6 @@ SECRET_USERNAME=dbadm
 
 #### Reference
 [distribute-credentials-secure](https://kubernetes.io/zh/docs/tasks/inject-data-application/distribute-credentials-secure/)
-
-
-
-
-
 
 ## 發佈模式 -- (還未完成)
 
