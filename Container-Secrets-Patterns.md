@@ -12,12 +12,12 @@ Container Secrets Patterns
 
 #### force
 - secret 不可採用明碼方式儲存
-- secret 不會被許多不同的服務或專案存取
-- secret 可以直接隨著發佈的程式碼一伴發佈出去，CI/CD的流程較為簡化
+- 專案結構較為簡單，只使用到一組 secret，不會被許多不同的服務或專案存取
+- 在部署系統時若secret可隨程式模組一起發佈並於本地端直接存取，則可簡化持續整合/持續發布的流程與系統架構。
 
 #### solution
 
-將 secret 存放在版本控管的系統中，利用版本控管支援 hook script 的功能，在將檔案存入主要的 repository 時觸發 hook script, 將所指定的檔案進行加密。反之，在取得檔案時，要將所指定的檔案解密
+將 secret 存放在版本控管的系統中，利用版本控管支援 hook script 的功能，在將檔案存入主要的 repository 時觸發 hook script, 將所指定的檔案進行加密。反之，在取得檔案時，要將所指定的檔案解密。
 
 ![](https://i.imgur.com/YmKflmn.png)
 
