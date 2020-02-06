@@ -18,7 +18,7 @@ Container Secrets Patterns
 #### solution
 
 將 secret 存放在版本控管的系統中，利用版本控管支援 hook script 的功能，在將檔案存入主要的 repository 時觸發 hook script, 將所指定的檔案進行加密。反之，在取得檔案時，要將所指定的檔案解密。
-![fig 1. 版控存放](https://i.imgur.com/6V35r7X.png)
+![fig. 1 版控存放](https://i.imgur.com/gzflm9E.png)
 
 **以 [Git-crypt](https://github.com/AGWA/git-crypt) 為例**
 
@@ -101,7 +101,7 @@ $ git-crypt lock ../key-of-git-crypt
 - 多個secret如果分開儲存，會造成管理的困難甚至造成安全疑慮。例如，需要設定不同軟體模組讀取不同secret的權限。
 
 #### solution
-![fig 2. 中央存放 - 發佈控制](https://i.imgur.com/qo4AmaF.png)
+![fig. 2 中央存放 - 發佈控制](https://i.imgur.com/m5pq8Uy.png)
 
 
 將 secret 存放在 secret management service 中。secret management service 以服務的方式存在於系統中，並提供權限控管，可依 secret 來定義存取的權限。 secret 管理者利用 secret management service 所提供的工具進行 secret 的管理。
